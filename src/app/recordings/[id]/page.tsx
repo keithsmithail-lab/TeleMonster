@@ -36,7 +36,12 @@ const mockRecording = {
   },
 }
 
-export default function RecordingDetailPage({ params }: { params: { id: string } }) {
+export default async function RecordingDetailPage(
+  { params }: { params: Promise<{ id: string }> }
+) {
+  // Await the params to satisfy PageProps typing in your project
+  const { id } = await params
+
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [activeTab, setActiveTab] = useState('transcript')
@@ -184,7 +189,7 @@ export default function RecordingDetailPage({ params }: { params: { id: string }
 
           <TabsContent value="comments" className="mt-6">
             <CommentsPanel
-              recordingId={params.id}
+              recordingId={id}
               comments={[]} // Uses mock data from component
             />
           </TabsContent>
