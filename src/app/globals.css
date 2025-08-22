@@ -154,7 +154,8 @@
    NEPQ Stage indicators
    ----------------------------- */
 .nepq-stage {
-  @apply inline-flex items-center justify-center w-6 h-6 text-xs font-medium rounded-full;
+  /* Use arbitrary sizes so we do not depend on spacing tokens */
+  @apply inline-flex items-center justify-center w-[1.5rem] h-[1.5rem] text-xs font-medium rounded-full;
 }
 
 .nepq-stage-1 { @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200; }
@@ -165,3 +166,4 @@
 .nepq-stage-6 { @apply bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200; }
 .nepq-stage-7 { @apply bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200; }
 .nepq-stage-8 { @apply bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200; }
+
