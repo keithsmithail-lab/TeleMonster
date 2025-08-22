@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(AGENT)
+  teamId       String?
+  orgId        String
+  firstName    String?
+  lastName     String?
+  avatar       String?
+  lastActive   DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  team         Team?        @relation(fields: [teamId], references: [id])
+  organization Organization @relation(fields: [orgId], references: [id])
+  recordings   Recording[]
+  comments     Comment[]
+  coachedTeams Team[]       @relation("TeamCoach")
+
+  @@map("users")
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  orgId     String
+  coachId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [orgId], references: [id])
+  coach        User?        @relation("TeamCoach", fields: [coachId], references: [id])
+  members      User[]
+
+  @@map("teams")
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  plan      String   @default("starter")
+  seats     Int      @default(5)
+  usedSeats Int      @default(0)
+  settings  Json     @default("{\"retentionDays\": 90, \"allowRecordingDownload\": true, \"enableRealTimeCoaching\": false}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users           User[]
+  teams           Team[]
+  personas        Persona[]
+  scenarios       Scenario[]
+  kbItems         KBItem[]
+  providerConfigs ProviderConfig[]
+
+  @@map("organizations")
+}
+
+model Persona {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  traits      Json
+  orgId       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [orgId], references: [id])
+  scenarios    Scenario[]
+
+  @@map("personas")
+}
+
+model Scenario {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  personaId   String
+  nepqStages  Int[]
+  timeLimit   Int      @default(600)
+  difficulty  String   @default("intermediate")
+  objectives  String[]
+  context     String
+  orgId       String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [orgId], references: [id])
+  persona      Persona      @relation(fields: [personaId], references: [id])
+  recordings   Recording[]
+
+  @@map("scenarios")
+}
+
+model Recording {
+  id          String   @id @default(cuid())
+  userId      String
+  scenarioId  String
+  duration    Int
+  audioUrl    String?
+  transcript  Json
+  score       Json
+  analytics   Json
+  metadata    Json     @default("{}")
+  tags        String[] @default([])
+  isBookmarked Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id])
+  scenario Scenario  @relation(fields: [scenarioId], references: [id])
+  comments Comment[]
+
+  @@map("recordings")
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  recordingId String
+  userId      String
+  parentId    String?
+  content     String
+  timestamp   Int?
+  type        String   @default("coaching")
+  reactions   Json     @default("{}")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  recording Recording @relation(fields: [recordingId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+model KBItem {
+  id        String   @id @default(cuid())
+  title     String
+  source    String
+  content   String
+  chunks    Json
+  metadata  Json     @default("{}")
+  orgId     String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@map("kb_items")
+}
+
+model ProviderConfig {
+  id        String   @id @default(cuid())
+  orgId     String
+  provider  String
+  type      String
+  config    Json
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [orgId], references: [id])
+
+  @@map("provider_configs")
+}
+
+enum Role {
+  ADMIN
+  COACH
+  AGENT
+}
