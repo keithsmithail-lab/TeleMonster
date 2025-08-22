@@ -54,5 +54,6 @@
     "tailwindcss": "^4.1.12",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2"
+    "@tailwindcss/postcss": "latest"
   }
 }
