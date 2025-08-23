@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  
+
   const router = useRouter()
   const { setUser } = useAuthStore()
 
@@ -24,8 +24,7 @@ export default function LoginPage() {
     setError('')
 
     try {
-      // TODO: Implement real authentication
-      // For now, mock authentication with predefined users
+      // Mock authentication with predefined users
       const mockUsers = [
         {
           email: 'admin@cvj.com',
@@ -33,11 +32,11 @@ export default function LoginPage() {
           user: {
             id: '1',
             email: 'admin@cvj.com',
-            role: 'ADMIN' as const,
+            role: 'admin', // lowercased to satisfy Role type
             firstName: 'Admin',
             lastName: 'User',
             orgId: 'org1',
-          }
+          },
         },
         {
           email: 'coach@cvj.com',
@@ -45,12 +44,12 @@ export default function LoginPage() {
           user: {
             id: '2',
             email: 'coach@cvj.com',
-            role: 'COACH' as const,
+            role: 'coach', // lowercased
             firstName: 'John',
             lastName: 'Coach',
             teamId: 'team1',
             orgId: 'org1',
-          }
+          },
         },
         {
           email: 'agent@cvj.com',
@@ -58,27 +57,27 @@ export default function LoginPage() {
           user: {
             id: '3',
             email: 'agent@cvj.com',
-            role: 'AGENT' as const,
+            role: 'agent', // lowercased
             firstName: 'Sarah',
             lastName: 'Johnson',
             teamId: 'team1',
             orgId: 'org1',
-          }
-        }
+          },
+        },
       ]
 
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000))
 
       const mockUser = mockUsers.find(u => u.email === email && u.password === password)
-      
+
       if (mockUser) {
-        setUser(mockUser.user)
+        setUser(mockUser.user) // now matches AuthUser Role type
         router.push('/dashboard')
       } else {
         setError('Invalid email or password')
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.')
     } finally {
       setIsLoading(false)
@@ -90,8 +89,8 @@ export default function LoginPage() {
       admin: 'admin@cvj.com',
       coach: 'coach@cvj.com',
       agent: 'agent@cvj.com',
-    }
-    
+    } as const
+
     setEmail(emails[userType])
     setPassword('TrainBetter2024!')
   }
@@ -134,7 +133,7 @@ export default function LoginPage() {
                   className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm font-medium text-gray-200">
                   Password
@@ -165,11 +164,7 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -183,9 +178,7 @@ export default function LoginPage() {
 
             {/* Demo Credentials */}
             <div className="mt-6 pt-6 border-t border-gray-600">
-              <p className="text-xs text-center text-gray-400 mb-3">
-                Demo Credentials (click to fill)
-              </p>
+              <p className="text-xs text-center text-gray-400 mb-3">Demo Credentials (click to fill)</p>
               <div className="grid grid-cols-3 gap-2">
                 <Button
                   type="button"
