@@ -187,7 +187,7 @@ export default function LoginPage() {
                   onClick={() => fillDemoCredentials('admin')}
                   className="text-xs border-gray-600 text-gray-300 hover:bg-gray-700"
                 >
-                  Admin
+                  admin
                 </Button>
                 <Button
                   type="button"
@@ -196,7 +196,7 @@ export default function LoginPage() {
                   onClick={() => fillDemoCredentials('coach')}
                   className="text-xs border-gray-600 text-gray-300 hover:bg-gray-700"
                 >
-                  Coach
+                  coach
                 </Button>
                 <Button
                   type="button"
@@ -205,7 +205,7 @@ export default function LoginPage() {
                   onClick={() => fillDemoCredentials('agent')}
                   className="text-xs border-gray-600 text-gray-300 hover:bg-gray-700"
                 >
-                  Agent
+                  agent
                 </Button>
               </div>
             </div>
